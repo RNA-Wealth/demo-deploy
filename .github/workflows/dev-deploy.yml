@@ -16,15 +16,21 @@ jobs:
         run: | 
           echo "privatekey=${{ secrets.DEV_SSH_PRIVATEKEY }} | base64 -d" >> $GITHUB_OUTPUT
       - name: Set up WireGuard
-        uses: egor-tensin/setup-wireguard@v1
-        with:
-          endpoint: '${{ secrets.DEV_WIREGUARD_ENDPOINT }}'
-          endpoint_public_key: '${{ secrets.DEV_WIREGUARD_ENDPOINT_PUBLIC_KEY }}'
-          ips: '${{ secrets.DEV_WIREGUARD_IPS }}'
-          allowed_ips: '${{ secrets.DEV_WIREGUARD_ALLOW_IPS }}'
-          private_key: '${{ secrets.DEV_WIREGUARD_PRIVATEKEY }}'
-          preshared_key: '${{ secrets.DEV_WIREGUARD_PRESHAREDKEY }}'
-          keepalive: '${{ secrets.DEV_WIREGUARD_KEEPALIVE }}'
+        run: |
+          sudo apt update
+          sudo apt install wireguard
+          echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > /etc/wireguard/wg.conf
+          sudo wg-quick up wg0
+      # - name: Set up WireGuard
+      #   uses: egor-tensin/setup-wireguard@v1
+      #   with:
+      #     endpoint: '${{ secrets.DEV_WIREGUARD_ENDPOINT }}'
+      #     endpoint_public_key: '${{ secrets.DEV_WIREGUARD_ENDPOINT_PUBLIC_KEY }}'
+      #     ips: '${{ secrets.DEV_WIREGUARD_IPS }}'
+      #     allowed_ips: '${{ secrets.DEV_WIREGUARD_ALLOW_IPS }}'
+      #     private_key: '${{ secrets.DEV_WIREGUARD_PRIVATEKEY }}'
+      #     preshared_key: '${{ secrets.DEV_WIREGUARD_PRESHAREDKEY }}'
+      #     keepalive: '${{ secrets.DEV_WIREGUARD_KEEPALIVE }}'
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.10
         with:
