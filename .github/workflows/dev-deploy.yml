@@ -11,16 +11,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create output Parameter(registry, docker tag, Branch and repo name) docker tag then set outputs
-        id: vars
+      - name: Create vpn conf and ssh keys
         run: | 
-          echo "privatekey=${{ secrets.DEV_SSH_PRIVATEKEY }} | base64 -d" >> $GITHUB_OUTPUT
+          echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > ./deploy.conf
+          echo ${{ secrets.DEV_SSH_USER_PRIVATE_KEY_BASE64 }} | base64 -d > ./id_rsa
       - name: Set up WireGuard
         run: |
           sudo apt-get update
           sudo apt-get install -y wireguard
           sudo apt-get install resolvconf
-          echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > ./deploy.conf
+          
           sudo mv ./deploy.conf /etc/wireguard/
           sudo wg-quick up deploy
       # - name: Set up WireGuard
@@ -33,12 +33,12 @@ jobs:
       #     private_key: '${{ secrets.DEV_WIREGUARD_PRIVATEKEY }}'
       #     preshared_key: '${{ secrets.DEV_WIREGUARD_PRESHAREDKEY }}'
       #     keepalive: '${{ secrets.DEV_WIREGUARD_KEEPALIVE }}'
-      - name: executing remote ssh commands using password
+      - name: connect to dev
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.DEV_VM_HOST }}
           username: ${{ secrets.DEV_SSH_USER }}
-          key: ${{ steps.vars.outputs.privatekey }}
+          key_path: ./id_rsa
           port: ${{ secrets.DEV_SSH_PORT }}
           passphrase: ${{ secrets.DEV_SSH_PASSPHRASE }}
           script: |
