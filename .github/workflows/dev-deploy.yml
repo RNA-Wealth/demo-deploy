@@ -19,8 +19,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wireguard
-          sudo echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > "$(pwd)/wg.conf"
-          sudo wg-quick up -f "$(pwd)/wg.conf"
+          sudo echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > ./wg.conf
+          sudo wg-quick up -f ./wg.conf
       # - name: Set up WireGuard
       #   uses: egor-tensin/setup-wireguard@v1
       #   with:
