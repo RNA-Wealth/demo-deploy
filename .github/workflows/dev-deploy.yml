@@ -20,19 +20,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wireguard
           sudo apt-get install resolvconf
-          
           sudo mv ./deploy.conf /etc/wireguard/
           sudo wg-quick up deploy
-      # - name: Set up WireGuard
-      #   uses: egor-tensin/setup-wireguard@v1
-      #   with:
-      #     endpoint: '${{ secrets.DEV_WIREGUARD_ENDPOINT }}'
-      #     endpoint_public_key: '${{ secrets.DEV_WIREGUARD_ENDPOINT_PUBLIC_KEY }}'
-      #     ips: '${{ secrets.DEV_WIREGUARD_IPS }}'
-      #     allowed_ips: '${{ secrets.DEV_WIREGUARD_ALLOW_IPS }}'
-      #     private_key: '${{ secrets.DEV_WIREGUARD_PRIVATEKEY }}'
-      #     preshared_key: '${{ secrets.DEV_WIREGUARD_PRESHAREDKEY }}'
-      #     keepalive: '${{ secrets.DEV_WIREGUARD_KEEPALIVE }}'
       - name: connect to dev
         uses: appleboy/ssh-action@v0.1.10
         with:
