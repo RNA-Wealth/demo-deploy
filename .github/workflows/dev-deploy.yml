@@ -17,9 +17,9 @@ jobs:
           echo "privatekey=${{ secrets.DEV_SSH_PRIVATEKEY }} | base64 -d" >> $GITHUB_OUTPUT
       - name: Set up WireGuard
         run: |
-          sudo apt update
-          sudo apt install wireguard
-          echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > /etc/wireguard/wg.conf
+          sudo apt-get update
+          sudo apt-get install -y wireguard
+          sudo echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > /etc/wireguard/wg.conf
           sudo wg-quick up wg0
       # - name: Set up WireGuard
       #   uses: egor-tensin/setup-wireguard@v1
