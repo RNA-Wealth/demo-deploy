@@ -15,13 +15,23 @@ jobs:
         run: | 
           echo ${{ secrets.DEV_WIREGUARD_CONF_BASE64 }} | base64 -d > ./deploy.conf
           echo ${{ secrets.DEV_SSH_USER_PRIVATE_KEY_BASE64 }} | base64 -d > ./id_rsa
-      - name: Set up WireGuard
+      - name: Install OpenVPN
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wireguard
-          sudo apt-get install resolvconf
-          sudo mv ./deploy.conf /etc/wireguard/
-          sudo wg-quick up deploy
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+      - name: Install OpenVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+      - name: write ovpn config
+        run: |
+          echo ${{ secrets.DEV_OPENVPN_BASE64 }} | base64 -d > ./config.ovpn
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: ./config.ovpn
+          username: ${{ secrets.DEV_OPENVPN_USER }}
+          password: ${{ secrets.DEV_OPENVPN_PASSWORD }}
       - name: connect to dev
         uses: appleboy/ssh-action@v0.1.10
         with:
