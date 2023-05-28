@@ -15,6 +15,7 @@ jobs:
         run: | 
           echo ${{ secrets.DEV_OPENVPN_BASE64 }} | base64 -d > ./config.ovpn
           echo ${{ secrets.DEV_SSH_USER_PRIVATE_KEY_BASE64 }} | base64 -d > ./id_rsa
+          chmod 600 ./id_rsa
       - name: Install OpenVPN
         run: |
           sudo apt update
